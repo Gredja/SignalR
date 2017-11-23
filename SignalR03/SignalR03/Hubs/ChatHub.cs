@@ -7,7 +7,7 @@ namespace SignalR03.Hubs
 {
     public class ChatHub : Hub
     {
-        static List<User> Users = new List<User>();
+        private static readonly List<User> Users = new List<User>();
 
         // Отправка сообщений
         public void Send(string name, string message)
@@ -20,9 +20,9 @@ namespace SignalR03.Hubs
         {
             var id = Context.ConnectionId;
 
-            if (Users.All(x => x.ConnectionId != id))
+            if (Users.All(x => x.Id != id))
             {
-                Users.Add(new User { ConnectionId = id, Name = userName });
+                Users.Add(User.CreateUser(id, userName));
 
                 // Посылаем сообщение текущему пользователю
                 Clients.Caller.onConnected(id, userName, Users);
@@ -35,7 +35,7 @@ namespace SignalR03.Hubs
         // Отключение пользователя
         public override System.Threading.Tasks.Task OnDisconnected(bool stopCalled)
         {
-            var item = Users.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            var item = Users.FirstOrDefault(x => x.Id == Context.ConnectionId);
             if (item != null)
             {
                 Users.Remove(item);

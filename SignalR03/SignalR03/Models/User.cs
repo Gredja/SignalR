@@ -3,7 +3,18 @@ namespace SignalR03.Models
 {
     public class User
     {
-        public string ConnectionId { get; set; }
-        public string Name { get; set; }
+        private User(string id, string name)
+        {
+            Id = id;
+            Name = name;
+        }
+
+        public string Id { get; }
+        public string Name { get; }
+
+        public static User CreateUser(string id, string name)
+        {
+            return new User(id, name);
+        }
     }
 }
